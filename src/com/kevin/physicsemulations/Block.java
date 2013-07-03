@@ -1,6 +1,8 @@
 package com.kevin.physicsemulations;
 
 import android.graphics.*;
+import android.util.*;
+import java.util.*;
 
 public class Block
 {
@@ -25,7 +27,7 @@ public class Block
 	}
 	
 	
-	public void update(Canvas canvas){
+	public void update(Canvas canvas,ArrayList<Block> siblings,Boolean detectCollisions){
 		x+=vx;
 		y+=vy;
 		vx+=ax;
@@ -52,6 +54,18 @@ public class Block
 		}
 		if(canvas!=null){
 			canvas.drawRect(x,y,x+width,y+width,paint);
+		}
+		if(detectCollisions){
+			for(int i=0;i<siblings.size();i++){
+				if(siblings.get(i)!=this){
+					float dx=siblings.get(i).x-x;
+					float dy=siblings.get(i).y-y;
+					if(dx<width&dx>-width&dy<width&dy>-width){
+						//Collide
+						Log.i("collision",x+","+y);
+					}
+				}
+			}
 		}
 	}
 }

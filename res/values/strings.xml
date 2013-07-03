@@ -4,5 +4,14 @@
     <string name="app_name">Physics Emulations</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+	
+	<string-array name="categories">
+		<item>Box</item>
+		<item>Multiple Boxes</item>
+		<item>Thread</item>
+		<item>Mesh</item>
+		<item>Irregular Box</item>
+		<item>Multiple Irregular Boxes</item>
+	</string-array>
 
 </resources>
