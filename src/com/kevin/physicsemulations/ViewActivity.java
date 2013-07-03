@@ -8,6 +8,9 @@ import android.widget.*;
 public class ViewActivity extends Activity
 {
 	
+	BaseView view;
+	Boolean gravity=false;
+	
 	@Override
 	public void onCreate(Bundle sis){
 		super.onCreate(sis);
@@ -16,7 +19,13 @@ public class ViewActivity extends Activity
 		SpinnerAdapter sa=ArrayAdapter.createFromResource(this,R.array.categories,R.layout.spinner_text);
 		ab.setListNavigationCallbacks(sa, new ActionBar.OnNavigationListener(){
 			public boolean onNavigationItemSelected(int p1, long p2){
-				Toast.makeText(ViewActivity.this,""+p1,Toast.LENGTH_SHORT).show();
+				BaseView tmp=new BaseView(ViewActivity.this);
+				switch(p1){
+					case 0: tmp=new Box(ViewActivity.this);
+					case 1: 
+				}
+				view=tmp;
+				setContentView(view);
 				return false;
 			}			
 		});
@@ -29,6 +38,19 @@ public class ViewActivity extends Activity
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present
 		getMenuInflater().inflate(R.menu.main_list, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		if(item.getItemId()==R.id.Gravity){
+			gravity=!gravity;
+			view.setGravity(gravity);
+			String builder="GRAVITY ";
+			if(gravity) builder+="OFF";
+			else builder+="ON";
+			item.setTitle(builder);
+		}
 		return true;
 	}
 	
