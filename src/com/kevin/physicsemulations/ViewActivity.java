@@ -7,13 +7,13 @@ import android.widget.*;
 
 public class ViewActivity extends Activity
 {
-    
+	
 	@Override
 	public void onCreate(Bundle sis){
 		super.onCreate(sis);
 		ActionBar ab=getActionBar();
 		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		SpinnerAdapter sa=ArrayAdapter.createFromResource(this,R.array.categories,android.R.layout.simple_spinner_dropdown_item);
+		SpinnerAdapter sa=ArrayAdapter.createFromResource(this,R.array.categories,R.layout.spinner_text);
 		ab.setListNavigationCallbacks(sa, new ActionBar.OnNavigationListener(){
 			public boolean onNavigationItemSelected(int p1, long p2){
 				Toast.makeText(ViewActivity.this,""+p1,Toast.LENGTH_SHORT).show();
@@ -22,6 +22,7 @@ public class ViewActivity extends Activity
 		});
 		ab.setTitle("");
 		ab.setSelectedNavigationItem(getIntent().getIntExtra("pos",0));
+		ab.show();
 	}
 
 	@Override
