@@ -12,7 +12,12 @@ public class MainList extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		ListView lv=new ListView(this);
-		lv.setAdapter(Adapter);
+		String[] array=new String[]{
+			"Box", "Multiple Boxes", "Thread", 
+			"Mesh", "Irregular Box", "Multiple Irregular Boxes"
+		};
+		lv.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,android.R.id.text1,array));
+		setContentView(lv);
 	}
 
 	@Override
