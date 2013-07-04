@@ -21,11 +21,12 @@ public class ViewActivity extends Activity
 			public boolean onNavigationItemSelected(int p1, long p2){
 				BaseView tmp=new BaseView(ViewActivity.this);
 				switch(p1){
-					case 0: tmp=new Box(ViewActivity.this);
-					case 1: 
+					case 0: tmp=new Box(ViewActivity.this); break;
+					case 1: tmp=new MultipleBoxes(ViewActivity.this); break;
 				}
 				view=tmp;
 				setContentView(view);
+				gravity=false;
 				return false;
 			}			
 		});
@@ -46,10 +47,6 @@ public class ViewActivity extends Activity
 		if(item.getItemId()==R.id.Gravity){
 			gravity=!gravity;
 			view.setGravity(gravity);
-			String builder="GRAVITY ";
-			if(gravity) builder+="OFF";
-			else builder+="ON";
-			item.setTitle(builder);
 		}
 		return true;
 	}

@@ -32,7 +32,7 @@ public class Box extends BaseView
 	
 
 	public void setGravity(Boolean active){
-		if(active)ay=.4f;
+		if(active)ay=.6f;
 		else ay=0;
 	}
 

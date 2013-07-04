@@ -4,6 +4,6 @@
         android:id="@+id/Gravity"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
-        android:title="Gravity ON" />
+        android:title="Gravity" />
 
 </menu>
