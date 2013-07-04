@@ -50,7 +50,15 @@ public class Box extends BaseView
 			y=height-size;
 			vy*=-.9;
 			if(ay!=0&vy+.3<0){
-				vy+=.3;
+				vy+=.3f;
+				if(vy+.3<0){
+					vy+=ay;
+					vx*=.95f;
+				}else{
+					vy=0;
+					vx=0;
+				}
+				if(vy>-.7)vy=0;
 			}
 		}else if(y<0&ay==0){
 			y=0;

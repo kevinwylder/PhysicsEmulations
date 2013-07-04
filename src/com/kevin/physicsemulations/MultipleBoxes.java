@@ -39,13 +39,12 @@ public class MultipleBoxes extends BaseView
 				bi.x+=bi.vx;
 				bi.y+=bi.vy;
 				bi.vy+=bi.ay;
-				float[] history=bi.history;
-				for(int a=8;a>1;a-=2){
-					history[a]=history[a-2];
-					history[a+1]=history[a-1];
+				for(int a=9;a>0;a--){
+					bi.historyX[a]=bi.historyX[a-1];
+					bi.historyY[a]=bi.historyY[a-1];
 				}
-				history[0]=bi.x;
-				history[1]=bi.y;
+				bi.historyX[0]=bi.x;
+				bi.historyY[0]=bi.y;
 			}
 			canvas.drawRect(bi.x,bi.y,bi.x+bi.size,bi.y+bi.size,paint);
 			for(int a=i+1;a<boxes.size();a++){
@@ -164,13 +163,12 @@ public class MultipleBoxes extends BaseView
 					if(b.fingerIndex==i){
 						b.x=x;
 						b.y=y;
-						float[] history=b.history;
-						for(int s=8;s>1;s-=2){
-							history[s]=history[s-2];
-							history[s+1]=history[s-1];
+						for(int s=9;s<0;s--){
+							b.historyX[s]=b.historyX[s-1];
+							b.historyY[s]=b.historyY[s-1];
 						}
-						history[0]=b.x;
-						history[1]=b.y;
+						b.historyX[0]=b.x;
+						b.historyY[0]=b.y;
 					}
 				}
 			}
@@ -180,16 +178,17 @@ public class MultipleBoxes extends BaseView
 				Block b=boxes.get(i);
 				if(b.fingerIndex==index){
 					i=boxes.size();
-					b.isGrabbed=false;
 					b.fingerIndex=-1;
 					float sigmaX=0;
 					float sigmaY=0;
-					for(int a=2;a<10;a++){
-						if(a%2==0) sigmaX+=b.history[i-2]-b.history[i];
-						else sigmaY+=b.history[i-2]-b.history[i];
+					for(int a=9;a>0;a--){
+						sigmaX+=b.historyX[a-1]-b.historyX[a];
+						sigmaY+=b.historyY[a-1]-b.historyY[a];
 					}
-					b.vx=sigmaX/5;
-					b.vy=sigmaY/5;
+					Log.w(Arrays.toString(b.historyX),Arrays.toString(b.historyY));
+					b.vx=sigmaX/10;
+					b.vy=sigmaY/10;
+					b.isGrabbed=false;
 				}
 			}
 		}
@@ -215,6 +214,8 @@ public class MultipleBoxes extends BaseView
 			vy=(float)Math.sin(angle)*12;
 			if(gravity) ay=.6f;
 			else ay=0;
+			Arrays.fill(historyX,0);
+			Arrays.fill(historyY,0);
 		}
 		
 		float x;
@@ -229,7 +230,8 @@ public class MultipleBoxes extends BaseView
 		int lastCollidedWith=-1;
 		int collisionTimer=0;
 		
-		float[] history=new float[10];
+		float[] historyX=new float[10];
+		float[] historyY=new float[10];
 		
 		boolean isGrabbed=false;
 		int fingerIndex=-1;
