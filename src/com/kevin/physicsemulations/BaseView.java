@@ -32,10 +32,10 @@ public class BaseView extends SurfaceView implements SurfaceHolder.Callback
 		super(ctx);
 		holder=getHolder();
 		holder.addCallback(this);
-		this.setOnTouchListener(new View.OnTouchListener(){
+		this.setOnTouchListener(new SurfaceView.OnTouchListener(){
 			public boolean onTouch(View p1, MotionEvent event){
 				handleTouch(event);
-				return false;
+				return true;
 			}
 		});
 	}
