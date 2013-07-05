@@ -46,7 +46,6 @@ public class MultipleBoxes extends BaseView
 				bi.historyX[0]=bi.x;
 				bi.historyY[0]=bi.y;
 			}
-			canvas.drawRect(bi.x,bi.y,bi.x+bi.size,bi.y+bi.size,paint);
 			for(int a=i+1;a<boxes.size();a++){
 				Block ba=boxes.get(a);
 				// add to ↓ isGrabbed and if isGrabbed, do secondary collision
@@ -137,6 +136,7 @@ public class MultipleBoxes extends BaseView
 					bi.lastCollidedWith=-1;
 				}
 			}
+			canvas.drawRect(bi.x,bi.y,bi.x+bi.size,bi.y+bi.size,paint);
 		}
 	}
 
