@@ -33,8 +33,10 @@ public class Thread extends BaseView
 
 	public void drawCanvas(Canvas canvas){
 		if(finger.x!=-1&finger.y!=-1)points.get(grabbedIndex).set(finger);
+		float y=0;
+		if(gravity) y=60;
 		for(int i=0;i<forces.size();i++){
-			forces.get(i).set(0,0);
+			forces.get(i).set(0,y);
 		/*	PointF self=points.get(i);
 			PointF parent;
 			PointF child;
@@ -72,8 +74,13 @@ public class Thread extends BaseView
 			points.get(i).y+=velocities.get(i).y*dt;
 			velocities.get(i).x*=.8f;
 			velocities.get(i).y*=.8f;
+			if(gravity&points.get(i).y>height){
+				points.get(i).y=height;
+				velocities.get(i).y=0;
+			}
 		}
 		for(int i=1;i<points.size();i++){
+			paint.setColor(Color.rgb(255-(int)(10-Math.max(Math.log(Math.hypot(forces.get(i).x,forces.get(i).y)),0))*25,0,0));
 			canvas.drawLine(points.get(i-1).x,points.get(i-1).y,points.get(i).x,points.get(i).y,paint);
 		}
 	}
@@ -101,7 +108,7 @@ public class Thread extends BaseView
 		velocities.clear();
 		forces.clear();
 		gap=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,2,getResources().getDisplayMetrics());
-		int num=(int)(height*.65/gap);
+		int num=(int)(height*.25/gap);
 		float x=width/2;
 		for(int i=0;i<num;i++){
 			points.add(new PointF(x,i*gap+15*gap));
