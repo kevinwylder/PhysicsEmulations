@@ -12,7 +12,10 @@ public class Thread extends BaseView
 	Paint paint=new Paint();
 	ArrayList<PointF> points=new ArrayList<PointF>();
 	ArrayList<PointF> velocities=new ArrayList<PointF>();
+	ArrayList<PointF> forces=new ArrayList<PointF>();
 	float gap;
+	float k=.0005f;
+	float dt=.4f;
 	boolean gravity=false;
 	int grabbedIndex=0;
 	
@@ -26,73 +29,64 @@ public class Thread extends BaseView
 	}
 
 	public void drawCanvas(Canvas canvas){
+		for(int i=0;i<forces.size();i++){
+			forces.get(i).set(0,0);
+		}
+		for(int A=0;A<1;A++){
+			for(int i=grabbedIndex+1;i<points.size();i++){
+				PointF parent=points.get(i-1);
+				PointF self=points.get(i);
+				PointF child=new PointF();
+				try{
+					child=points.get(i+1);
+				}catch(Exception e){
+					child.set(self);
+				}
+				double distanceParent=Math.sqrt(Math.pow(parent.x-self.x,2)+Math.pow(parent.y-self.y,2));
+				double distanceChild=Math.sqrt(Math.pow(child.x-self.x,2)+Math.pow(child.y-self.y,2));
+				if(distanceParent>gap){
+					double angle=Math.atan2(parent.y-self.y,parent.x-self.x);
+					forces.get(i).x+=(float)(Math.pow((distanceParent-gap),2)*Math.cos(angle))*k;
+					forces.get(i).y+=(float)(Math.pow((distanceParent-gap),2)*Math.sin(angle))*k;
+				}else if(distanceChild>gap){
+					double angle=Math.atan2(self.y-child.y,self.x-child.x);
+					forces.get(i).x+=(float)(Math.pow((distanceChild-gap),2)*Math.cos(angle))*k;
+					forces.get(i).y+=(float)(Math.pow((distanceChild-gap),2)*Math.sin(angle))*k;
+				}
+			}	
+			for(int i=grabbedIndex-1;i>=0;i--){
+				PointF parent=points.get(i+1);
+				PointF self=points.get(i);
+				PointF child=new PointF();
+				try{
+					child=points.get(i-1);
+				}catch(Exception e){
+					child.set(self);
+				}
+				double distanceParent=Math.sqrt(Math.pow(parent.x-self.x,2)+Math.pow(parent.y-self.y,2));
+				double distanceChild=Math.sqrt(Math.pow(child.x-self.x,2)+Math.pow(child.y-self.y,2));
+				if(distanceParent>gap){
+					double angle=Math.atan2(parent.y-self.y,parent.x-self.x);
+					forces.get(i).x+=(float)(Math.pow((distanceParent-gap),2)*Math.cos(angle))*k;
+					forces.get(i).y+=(float)(Math.pow((distanceParent-gap),2)*Math.sin(angle))*k;
+				}else if(distanceChild>gap){
+					double angle=Math.atan2(self.y-child.y,self.x-child.x);
+					forces.get(i).x+=(float)(Math.pow((distanceChild-gap),2)*Math.cos(angle))*k;
+					forces.get(i).y+=(float)(Math.pow((distanceChild-gap),2)*Math.sin(angle))*k;
+				}
+			}
+		}
+		for(int i=0;i<points.size();i++){
+			float mass=.5f;
+			velocities.get(i).x+=(forces.get(i).x*dt)/mass;
+			velocities.get(i).y+=(forces.get(i).y*dt)/mass;
+			points.get(i).x+=velocities.get(i).x*dt;
+			points.get(i).y+=velocities.get(i).y*dt;
+			velocities.get(i).x*=.95f;
+			velocities.get(i).y*=.95f;
+		}
 		for(int i=1;i<points.size();i++){
 			canvas.drawLine(points.get(i-1).x,points.get(i-1).y,points.get(i).x,points.get(i).y,paint);
-		}
-		if(gravity){
-			for(int i=0;i<points.size();i++){
-				if(i!=grabbedIndex){
-    				points.get(i).x-=velocities.get(i).x;
-	    			points.get(i).y-=velocities.get(i).y;
-				//	velocities.get(i).y+=8;
-				}
-			}
-		}
-		for(int i=grabbedIndex+1;i<points.size();i++){
-			PointF p1=points.get(i-1);
-			PointF p2=points.get(i);
-			double distance=Math.sqrt(Math.pow(p1.x-p2.x,2)+Math.pow(p2.y-p1.y,2));
-			if(distance>gap){
-	  			if(!gravity){
-	    			double angle=Math.atan2(p1.y-p2.y,p2.x-p1.x);
-	    			PointF velocity=new PointF();
-	     			velocity.set(p2);
-	     			p2.set(p1.x+gap*(float)(Math.cos(angle)),p1.y-(gap*(float)(Math.sin(angle))));
-	     			velocity.x-=p2.x;
-	     			velocity.y-=p2.y;
-	    			velocities.get(i).set(velocity);
-	    			points.get(i).set(p2);
-				}else{
-					float vx1=velocities.get(i-1).x;
-					float vy1=velocities.get(i-1).y;
-					float vx2=velocities.get(i).x;
-					float vy2=velocities.get(i).y;
-					float vfx1=((5*vx1)+(5*vx2)-(5*vx1)+(5*vx2))/(10);
-					float vfx2=((5*vx1)+(5*vx2)-(5*vfx1))/5;
-					float vfy1= ((5*vy1)+(5*vy2)-(5*vy1)+(5*vy2))/(10);
-					float vfy2= ((5*vy1)+(5*vy2)-(5*vfy1))/5;
-					velocities.get(i-1).set(vfx1,vfy1);
-					velocities.get(i).set(vfx2,vfy2);
-				}
-			}
-		}	
-		for(int i=grabbedIndex-1;i>=0;i--){
-			PointF p1=points.get(i+1);
-			PointF p2=points.get(i);
-			double distance=Math.sqrt(Math.pow(p1.x-p2.x,2)+Math.pow(p2.y-p1.y,2));
-			if(distance>gap){
-				if(!gravity){
-	    			double angle=Math.atan2(p1.y-p2.y,p2.x-p1.x);
-	    			PointF velocity=new PointF();
-	     			velocity.set(p2);
-	     			p2.set(p1.x+gap*(float)(Math.cos(angle)),p1.y-(gap*(float)(Math.sin(angle))));
-	     			velocity.x-=p2.x;
-	     			velocity.y-=p2.y;
-	    			velocities.get(i).set(velocity);
-	    			points.get(i).set(p2);
-				}else{
-					float vx1=velocities.get(i-1).x;
-					float vy1=velocities.get(i-1).y;
-					float vx2=velocities.get(i).x;
-					float vy2=velocities.get(i).y;
-					float vfx1=((5*vx1)+(5*vx2)-(5*vx1)+(5*vx2))/(10);
-					float vfx2=((5*vx1)+(5*vx2)-(5*vfx1))/5;
-					float vfy1= ((5*vy1)+(5*vy2)-(5*vy1)+(5*vy2))/(10);
-					float vfy2= ((5*vy1)+(5*vy2)-(5*vfy1))/5;
-					velocities.get(i+1).set(vfx1,vfy1);
-					velocities.get(i).set(vfx2,vfy2);
-				}
-			}
 		}
 	}
 
@@ -114,13 +108,37 @@ public class Thread extends BaseView
 	public void surfaceChangedMethod(){
 		points.clear();
 		velocities.clear();
+		forces.clear();
 		gap=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,2,getResources().getDisplayMetrics());
 		int num=(int)(height*.65/gap);
 		float x=width/2;
 		for(int i=0;i<num;i++){
 			points.add(new PointF(x,i*gap+15*gap));
 			velocities.add(new PointF(0,0));
+			forces.add(new PointF(0,0));
 		}
 	}
+	
+	public void setForces(int index){
+		PointF home=points.get(index);
+		for(int i=0;i<points.size();i++){
+			if(i!=index){
+				PointF guest=points.get(i);
+				float dT=Math.abs(index-i)*gap;
+				float dA=(float)Math.sqrt(Math.pow(home.x-guest.x,2)+Math.pow(home.y-guest.y,2));
+				if(dT>dA){
+					double angle;
+					if(i<index){
+						angle=Math.atan2(guest.y-home.y,guest.x-home.x);
+					}else{
+						angle=Math.atan2(home.y-guest.y,home.x-guest.x);
+					}
+					forces.get(i).x+=(float)(Math.pow((dA-dT),2)*Math.cos(angle))*k;
+					forces.get(i).y+=(float)(Math.pow((dA-dT),2)*Math.sin(angle))*k;
+				}
+			}
+		}
+	}
+	
 }
 	
