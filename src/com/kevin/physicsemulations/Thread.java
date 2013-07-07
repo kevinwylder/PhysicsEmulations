@@ -15,12 +15,11 @@ public class Thread extends BaseView
 	ArrayList<PointF> forces=new ArrayList<PointF>();
 	PointF finger=new PointF(-1,-1);
 	float gap;
-	float k=.01f;
+	float k=.005f;
 	float dt=.1f;
 	boolean gravity=false;
 	int grabbedIndex=0;
-	float maxForce=0;
-	float minForce=0;
+	boolean grabbed=false;
 	
 	public Thread(Context ctx){
 		super(ctx);
@@ -72,8 +71,8 @@ public class Thread extends BaseView
 			velocities.get(i).y+=(forces.get(i).y*dt)/mass;
 			points.get(i).x+=velocities.get(i).x*dt;
 			points.get(i).y+=velocities.get(i).y*dt;
-			velocities.get(i).x*=.8f;
-			velocities.get(i).y*=.8f;
+			velocities.get(i).x*=.9f;
+			velocities.get(i).y*=.9f;
 			if(gravity&points.get(i).y>height){
 				points.get(i).y=height;
 				velocities.get(i).y=0;
@@ -88,18 +87,20 @@ public class Thread extends BaseView
 	public void handleTouch(MotionEvent event){
 		if(event.getAction()==MotionEvent.ACTION_MOVE){
 		//	points.get(grabbedIndex).set(event.getX(),event.getY());
-		    finger.set(event.getX(),event.getY());
+		    if(grabbed)finger.set(event.getX(),event.getY());
 		}else if(event.getAction()==MotionEvent.ACTION_DOWN){
-			double closest=Math.pow(2,20);
+			double closest=400;
 			for(int i=0;i<points.size();i++){
 				double dist=Math.sqrt(Math.pow(points.get(i).x-event.getX(),2)+Math.pow(points.get(i).y-event.getY(),2));
 				if(dist<closest){
 					closest=dist;
 					grabbedIndex=i;
+					grabbed=true;
 				}
 			}
 		}else if(event.getAction()==MotionEvent.ACTION_UP){
 			finger.set(-1,-1);
+			grabbed=false;
 		}
 	}
 
@@ -107,8 +108,8 @@ public class Thread extends BaseView
 		points.clear();
 		velocities.clear();
 		forces.clear();
-		gap=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,2,getResources().getDisplayMetrics());
-		int num=(int)(height*.25/gap);
+		gap=TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,6,getResources().getDisplayMetrics());
+		int num=30;
 		float x=width/2;
 		for(int i=0;i<num;i++){
 			points.add(new PointF(x,i*gap+15*gap));

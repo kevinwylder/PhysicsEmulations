@@ -24,7 +24,7 @@ public class ViewActivity extends Activity
 					case 0: tmp=new Box(ViewActivity.this); break;
 					case 1: tmp=new MultipleBoxes(ViewActivity.this); break;
 					case 2: tmp=new com.kevin.physicsemulations.Thread(ViewActivity.this); break;
-					
+					case 3: tmp=new Mesh(ViewActivity.this); break;
 				}
 				view=tmp;
 				setContentView(view);
